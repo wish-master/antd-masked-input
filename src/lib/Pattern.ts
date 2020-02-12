@@ -2,6 +2,7 @@ import {
   DEFAULT_FORMAT_CHARACTERS,
   DEFAULT_PLACEHOLDER_CHAR,
   ESCAPE_CHAR,
+  GREATER_CHAR,
   FormatCharacters,
 } from './helpers';
 
@@ -28,6 +29,9 @@ export class Pattern {
   /** If true, only the pattern before the last valid value character shows. */
   isRevealingMask: boolean;
 
+  /** If true, it will be reparse with data from formatValue function. */
+  needToParseWithValue: boolean;
+
   constructor(
     source: string,
     formatCharacters: FormatCharacters,
@@ -43,13 +47,16 @@ export class Pattern {
 
     this.isRevealingMask = isRevealingMask;
 
+    this.needToParseWithValue = false;
+
     this._parse();
   }
 
-  _parse() {
+  _parse(value = null) {
     var sourceChars = this.source.split('');
     var patternIndex = 0;
     var pattern: string[] = [];
+    var indexToDuplicate = -1;
 
     for (var i = 0, l = sourceChars.length; i < l; i++) {
       var char = sourceChars[i];
@@ -58,7 +65,35 @@ export class Pattern {
           throw new Error('InputMask: pattern ends with a raw ' + ESCAPE_CHAR);
         }
         char = sourceChars[++i];
-      } else if (char in this.formatCharacters) {
+      }
+      else if (char === GREATER_CHAR) {
+        if(!value) {
+          this.needToParseWithValue = true;
+          continue;
+        }
+
+        if(indexToDuplicate === -1) {
+          indexToDuplicate = i - 1;
+        }
+
+        continue;
+      }
+      else if (!(char in this.formatCharacters)) {
+        if(indexToDuplicate !== -1) {
+            var formatCharacter = sourceChars[indexToDuplicate];
+            var index = value.indexOf(char, pattern.length);
+            var count = index - pattern.length;
+            for (var j = 0; j < count; j++) {
+                this.lastEditableIndex = patternIndex;
+                this._editableIndices[patternIndex] = true;
+                pattern.push(formatCharacter);
+                patternIndex++;
+            }
+
+            indexToDuplicate = -1;
+        }
+      }
+      else if (char in this.formatCharacters) {
         if (this.firstEditableIndex === null) {
           this.firstEditableIndex = patternIndex;
         }
@@ -76,12 +111,32 @@ export class Pattern {
       );
     }
 
+    if(indexToDuplicate !== -1) {
+        var formatCharacter = sourceChars[indexToDuplicate];
+        var count = value.length - pattern.length;
+        for (var j = 0; j < count; j++) {
+            this.lastEditableIndex = patternIndex;
+            this._editableIndices[patternIndex] = true;
+            pattern.push(formatCharacter);
+            patternIndex++;
+        }
+    }
+
     // @ts-ignore
     this.pattern = pattern;
     this.length = pattern.length;
   }
 
   formatValue(value: string[]): string[] {
+    if(this.needToParseWithValue) {
+      this.pattern = [];
+      this.length = 0;
+      this.firstEditableIndex = null;
+      this.lastEditableIndex = null;
+      this._editableIndices = {};
+      this.needToParseWithValue = false;
+      this._parse(value);
+    }
     var valueBuffer = new Array(this.length);
     var valueIndex = 0;
 

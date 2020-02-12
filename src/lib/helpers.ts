@@ -103,6 +103,7 @@ export function mergeFormatCharacters(formatCharacters: FormatCharacters) {
 }
 
 export const ESCAPE_CHAR = '\\';
+export const GREATER_CHAR = '+';
 
 export const DIGIT_RE = /^\d$/;
 export const LETTER_RE = /^[A-Za-z]$/;
