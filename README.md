@@ -1,13 +1,19 @@
-# antd-mask-input
+# antd-masked-input
 
-A [Ant Design Input](https://ant.design/components/input/) component for `<input>` masking, built on top of [inputmask-core](https://github.com/insin/inputmask-core).
+A [Ant Design Input](https://ant.design/components/input/) component for `<input>` masking, built on top of [inputmask-core](https://github.com/insin/inputmask-core). A fork of [antd-mask-input from antoniopresto](https://github.com/antoniopresto/antd-mask-input) with "one or more" (+) support. Probably, it's a temporary package till original one not be having the same mechanic.
 
 ## Install
 
 ### npm
 
 ```
-npm install antd-mask-input --save
+npm install antd-masked-input --save
+```
+
+### yarn
+
+```
+yarn add antd-masked-input
 ```
 
 ## Usage
@@ -16,13 +22,11 @@ Give `MaskedInput` a [`mask`](#mask-string):
 
 ```javascript
 import React from 'react'
-import MaskedInput from 'antd-mask-input'
+import MaskedInput from 'antd-masked-input'
 
-class CreditCardDetails extends React.Component {
+class Demo extends React.Component {
   state = {
-    card: '',
-    expiry: '',
-    ccv: ''
+    email: ''
   }
 
   _onChange = (e) => {
@@ -30,20 +34,9 @@ class CreditCardDetails extends React.Component {
   }
 
   render() {
-    return <div className="CreditCardDetails">
-      <label>
-        Card Number:{' '}
-        <MaskedInput mask="1111 1111 1111 1111" name="card" size="20" onChange={this._onChange}/>
-      </label>
-      <label>
-        Expiry Date:{' '}
-        <MaskedInput mask="11/1111" name="expiry" placeholder="mm/yyyy" onChange={this._onChange}/>
-      </label>
-      <label>
-        CCV:{' '}
-        <MaskedInput mask="111" name="ccv" onChange={this._onChange}/>
-      </label>
-    </div>
+    return <>
+        <MaskedInput mask="*+@*+.*+" name="email" size="20" onChange={this._onChange}/>
+    </>
   }
 }
 ```

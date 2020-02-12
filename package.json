@@ -1,21 +1,21 @@
 {
-  "name": "antd-mask-input",
-  "version": "0.1.13",
-  "description": "Ant Design Mask Input",
+  "name": "antd-masked-input",
+  "version": "1.0.0",
+  "description": "Masked Input for and.design",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
-  "repository": "https://github.com/antoniopresto/antd-mask-input",
+  "repository": "https://github.com/wish-master/antd-masked-input",
   "license": "MIT",
   "keywords": [
     "react",
     "antd",
     "ant design",
     "mask input",
-    "mask",
+    "masked input",
     "masked"
   ],
-  "author": "@antoniopresto",
+  "author": "@wish-master",
   "scripts": {
     "describe": "npm-scripts-info",
     "build": "run-s clean && run-p build:*",
